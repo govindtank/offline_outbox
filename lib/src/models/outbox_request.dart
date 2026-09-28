@@ -194,7 +194,9 @@ class RetryPolicy {
 
   /// Computes the delay before attempt number [attempt] (1-indexed).
   Duration computeNextDelay(int attempt) {
-    if (attempt <= 0) return Duration.zero;
+    if (attempt <= 0) {
+      return Duration.zero;
+    }
 
     final double exponentialMs = initialDelay.inMilliseconds *
         math.pow(backoffMultiplier, attempt - 1).toDouble();

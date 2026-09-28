@@ -63,7 +63,9 @@ class OfflineOutboxEngine {
       final existing = await storage.getAll();
       final hasDuplicate =
           existing.any((item) => item.idempotencyKey == request.idempotencyKey);
-      if (hasDuplicate) return;
+      if (hasDuplicate) {
+        return;
+      }
     }
 
     await storage.save(request);
@@ -73,7 +75,9 @@ class OfflineOutboxEngine {
   /// Processes all pending requests currently eligible for transmission.
   /// Returns the number of successfully delivered requests in this run.
   Future<int> processQueue() async {
-    if (_isProcessing || _isPaused) return 0;
+    if (_isProcessing || _isPaused) {
+      return 0;
+    }
 
     _isProcessing = true;
     int successCount = 0;
@@ -84,21 +88,28 @@ class OfflineOutboxEngine {
 
       // Filter eligible items
       final List<OutboxRequest> eligible = allItems.where((item) {
-        if (item.status == OutboxItemStatus.deadLetter) return false;
-        if (item.nextRetryAt != null && item.nextRetryAt!.isAfter(now))
+        if (item.status == OutboxItemStatus.deadLetter) {
           return false;
+        }
+        if (item.nextRetryAt != null && item.nextRetryAt!.isAfter(now)) {
+          return false;
+        }
         return true;
       }).toList();
 
       // Sort by Priority (critical > high > normal > low), then by createdAt ascending
       eligible.sort((a, b) {
         final int prioComp = a.priority.index.compareTo(b.priority.index);
-        if (prioComp != 0) return prioComp;
+        if (prioComp != 0) {
+          return prioComp;
+        }
         return a.createdAt.compareTo(b.createdAt);
       });
 
       for (final req in eligible) {
-        if (_isPaused) break;
+        if (_isPaused) {
+          break;
+        }
 
         final updatedReq = req.copyWith(
           status: OutboxItemStatus.inFlight,
