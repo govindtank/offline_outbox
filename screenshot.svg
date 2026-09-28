@@ -1,0 +1,129 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400" width="100%" height="100%">
+  <defs>
+    <!-- Background Gradient -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0F172A" />
+      <stop offset="100%" stop-color="#1E293B" />
+    </linearGradient>
+
+    <!-- Card Background -->
+    <linearGradient id="cardGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1E293B" stop-opacity="0.9" />
+      <stop offset="100%" stop-color="#0F172A" stop-opacity="0.95" />
+    </linearGradient>
+
+    <filter id="cardShadow" x="-10%" y="-10%" width="120%" height="125%">
+      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#000000" flood-opacity="0.5" />
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="800" height="400" rx="16" fill="url(#bgGrad)" />
+
+  <!-- Header -->
+  <text x="400" y="42" text-anchor="middle" fill="#38BDF8" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="20" font-weight="800" letter-spacing="0.5">
+    offline_outbox
+  </text>
+  <text x="400" y="66" text-anchor="middle" fill="#94A3B8" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="13">
+    Transactional Outbox Pattern · Exponential Backoff &amp; Jitter · Priority Queues · Deduplication
+  </text>
+
+  <!-- Left: Transactional Outbox Pipeline Card -->
+  <g transform="translate(48, 90)">
+    <rect width="336" height="275" rx="20" fill="url(#cardGrad)" stroke="#334155" stroke-width="1.5" filter="url(#cardShadow)" />
+
+    <text x="168" y="32" text-anchor="middle" fill="#F8FAFC" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="15" font-weight="700">
+      Outbox Request Pipeline
+    </text>
+
+    <!-- Node 1: Client Enqueue -->
+    <g transform="translate(24, 52)">
+      <rect width="288" height="46" rx="10" fill="#0F172A" stroke="#EF4444" stroke-width="1.5" />
+      <circle cx="22" cy="23" r="12" fill="#EF4444" fill-opacity="0.2" />
+      <text x="22" y="27" text-anchor="middle" fill="#EF4444" font-size="11" font-weight="bold">📥</text>
+      <text x="44" y="21" fill="#FFFFFF" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="12" font-weight="bold">POST /api/v1/orders</text>
+      <text x="44" y="36" fill="#EF4444" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="10" font-weight="600">CRITICAL PRIORITY · IDEMPOTENT</text>
+    </g>
+
+    <!-- Arrow 1 -->
+    <path d="M 168,103 L 168,118" stroke="#38BDF8" stroke-width="2" stroke-dasharray="3 3" />
+
+    <!-- Node 2: Persistent Storage -->
+    <g transform="translate(24, 122)">
+      <rect width="288" height="46" rx="10" fill="#0F172A" stroke="#38BDF8" stroke-width="1.5" />
+      <circle cx="22" cy="23" r="12" fill="#38BDF8" fill-opacity="0.2" />
+      <text x="22" y="27" text-anchor="middle" fill="#38BDF8" font-size="11" font-weight="bold">💾</text>
+      <text x="44" y="21" fill="#FFFFFF" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="12" font-weight="bold">Persistent Disk Storage</text>
+      <text x="44" y="36" fill="#94A3B8" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="10">Survives app restarts, OS kills &amp; offline</text>
+    </g>
+
+    <!-- Arrow 2 -->
+    <path d="M 168,173 L 168,188" stroke="#34D399" stroke-width="2" stroke-dasharray="3 3" />
+
+    <!-- Node 3: Retry & Drain -->
+    <g transform="translate(24, 192)">
+      <rect width="288" height="46" rx="10" fill="#0F172A" stroke="#34D399" stroke-width="1.5" />
+      <circle cx="22" cy="23" r="12" fill="#34D399" fill-opacity="0.2" />
+      <text x="22" y="27" text-anchor="middle" fill="#34D399" font-size="11" font-weight="bold">🚀</text>
+      <text x="44" y="21" fill="#FFFFFF" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="12" font-weight="bold">Delivered to Gateway</text>
+      <text x="44" y="36" fill="#34D399" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="10" font-weight="600">STATUS: 200 OK · DRAINED</text>
+    </g>
+  </g>
+
+  <!-- Right: Architecture Features -->
+  <g transform="translate(416, 90)">
+    <rect width="336" height="275" rx="20" fill="url(#cardGrad)" stroke="#334155" stroke-width="1.5" filter="url(#cardShadow)" />
+
+    <text x="24" y="32" fill="#F8FAFC" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="15" font-weight="700">
+      Engine Architecture
+    </text>
+
+    <!-- Feature 1 -->
+    <g transform="translate(24, 52)">
+      <circle cx="12" cy="16" r="10" fill="#38BDF8" fill-opacity="0.2" />
+      <text x="12" y="20" text-anchor="middle" fill="#38BDF8" font-size="11" font-weight="bold">⚡</text>
+      <text x="32" y="14" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="12" font-weight="600">
+        Exponential Backoff &amp; Jitter
+      </text>
+      <text x="32" y="28" fill="#94A3B8" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="10">
+        Prevents server thundering-herd spikes on reconnect
+      </text>
+    </g>
+
+    <!-- Feature 2 -->
+    <g transform="translate(24, 102)">
+      <circle cx="12" cy="16" r="10" fill="#34D399" fill-opacity="0.2" />
+      <text x="12" y="20" text-anchor="middle" fill="#34D399" font-size="11" font-weight="bold">🔒</text>
+      <text x="32" y="14" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="12" font-weight="600">
+        Idempotency Deduplication
+      </text>
+      <text x="32" y="28" fill="#94A3B8" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="10">
+        Guarantees zero duplicate orders when connection flickers
+      </text>
+    </g>
+
+    <!-- Feature 3 -->
+    <g transform="translate(24, 152)">
+      <circle cx="12" cy="16" r="10" fill="#EF4444" fill-opacity="0.2" />
+      <text x="12" y="20" text-anchor="middle" fill="#EF4444" font-size="11" font-weight="bold">🎯</text>
+      <text x="32" y="14" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="12" font-weight="600">
+        4-Tier Priority Scheduling
+      </text>
+      <text x="32" y="28" fill="#94A3B8" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="10">
+        Orders &amp; messages drain before background analytics
+      </text>
+    </g>
+
+    <!-- Feature 4 -->
+    <g transform="translate(24, 202)">
+      <circle cx="12" cy="16" r="10" fill="#A855F7" fill-opacity="0.2" />
+      <text x="12" y="20" text-anchor="middle" fill="#C084FC" font-size="11" font-weight="bold">📡</text>
+      <text x="32" y="14" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="12" font-weight="600">
+        Pluggable Storage &amp; Executor
+      </text>
+      <text x="32" y="28" fill="#94A3B8" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="10">
+        Works with Dio, http, Hive, Sqflite, or SharedPreferences
+      </text>
+    </g>
+  </g>
+</svg>
