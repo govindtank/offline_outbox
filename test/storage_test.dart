@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:flutter_test/flutter_test.dart';
+import 'package:test/test.dart';
 import 'package:offline_outbox/offline_outbox.dart';
 
 void main() {
@@ -8,50 +8,45 @@ void main() {
       final storage = InMemoryOutboxStorage();
       await storage.init();
 
-      final req1 = OutboxRequest(id: '1', endpoint: '/a');
-      final req2 = OutboxRequest(id: '2', endpoint: '/b');
+      final req1 = OutboxRequest(id: 'r1', endpoint: '/api/v1');
+      final req2 = OutboxRequest(id: 'r2', endpoint: '/api/v2');
 
       await storage.save(req1);
       await storage.save(req2);
 
-      var all = await storage.getAll();
-      expect(all.length, 2);
+      expect(await storage.getAll(), hasLength(2));
+      expect((await storage.getById('r1'))?.endpoint, '/api/v1');
 
-      final fetched = await storage.getById('1');
-      expect(fetched?.endpoint, '/a');
-
-      await storage.remove('1');
-      all = await storage.getAll();
-      expect(all.length, 1);
-      expect(all.first.id, '2');
+      await storage.remove('r1');
+      expect(await storage.getAll(), hasLength(1));
+      expect(await storage.getById('r1'), isNull);
 
       await storage.clear();
-      all = await storage.getAll();
-      expect(all.isEmpty, isTrue);
+      expect(await storage.getAll(), isEmpty);
     });
 
-    test('FileJsonOutboxStorage persists to temporary file', () async {
+    test('FileJsonOutboxStorage persists to disk', () async {
       final tempDir = await Directory.systemTemp.createTemp('outbox_test_');
       final file = File('${tempDir.path}/outbox.json');
-      final storage = FileJsonOutboxStorage(file);
-      await storage.init();
 
-      final req =
-          OutboxRequest(id: 'file_1', endpoint: '/sync', payload: {'k': 'v'});
-      await storage.save(req);
+      final storage1 = FileJsonOutboxStorage(file);
+      await storage1.init();
 
-      // Verify file written
-      expect(await file.exists(), isTrue);
+      final req = OutboxRequest(
+        id: 'persistent_1',
+        endpoint: '/checkout',
+        payload: {'amount': 99.9},
+      );
+      await storage1.save(req);
 
-      // Create new storage instance pointing to same file
+      // Re-open with new storage instance to verify file hydration
       final storage2 = FileJsonOutboxStorage(file);
       await storage2.init();
-      final loaded = await storage2.getAll();
-      expect(loaded.length, 1);
-      expect(loaded.first.id, 'file_1');
-      expect(loaded.first.payload['k'], 'v');
 
-      // Cleanup
+      final retrieved = await storage2.getById('persistent_1');
+      expect(retrieved, isNotNull);
+      expect(retrieved?.payload['amount'], 99.9);
+
       await tempDir.delete(recursive: true);
     });
   });

@@ -1,3 +1,18 @@
+## 1.1.0
+
+* Converted to pure Dart package (zero Flutter SDK dependency).
+* Added per-request `requestTimeout` in `RetryPolicy` to prevent hung executor locks.
+* Added `enqueueAll()` batch request insertion.
+* Added dead-letter queue management APIs: `getDeadLetterRequests()`, `retryDeadLetter()`, and `clearDeadLetters()`.
+* Added `onDeadLetterStream` for real-time monitoring of failed items.
+* Fixed `copyWith` null-safety bug allowing explicit reset of nullable fields.
+* Added explicit `platforms` declaration (Android, iOS, macOS, Windows, Linux).
+
+## 1.0.0 Converted to pure Dart package — no Flutter SDK dependency required.
+* Works in Dart CLI apps, server-side Dart, and Flutter projects.
+* Added `platforms` declaration (android, ios, linux, macos, windows).
+* Note: `dart:io` is used for `FileJsonOutboxStorage`; web is excluded.
+
 ## 1.0.0
 
 * Initial stable release of `offline_outbox`.

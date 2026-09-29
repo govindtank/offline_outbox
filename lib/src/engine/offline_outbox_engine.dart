@@ -24,6 +24,8 @@ class OfflineOutboxEngine {
       StreamController<OutboxRequest>.broadcast();
   final StreamController<OutboxRequest> _onFailedController =
       StreamController<OutboxRequest>.broadcast();
+  final StreamController<OutboxRequest> _onDeadLetterController =
+      StreamController<OutboxRequest>.broadcast();
 
   bool _isProcessing = false;
   bool _isPaused = false;
@@ -48,8 +50,12 @@ class OfflineOutboxEngine {
   /// Broadcast stream emitting requests that succeeded.
   Stream<OutboxRequest> get onCompletedStream => _onCompletedController.stream;
 
-  /// Broadcast stream emitting requests that failed.
+  /// Broadcast stream emitting requests that failed and are scheduled for retry.
   Stream<OutboxRequest> get onFailedStream => _onFailedController.stream;
+
+  /// Broadcast stream emitting requests that exceeded max attempts and entered dead-letter.
+  Stream<OutboxRequest> get onDeadLetterStream =>
+      _onDeadLetterController.stream;
 
   /// Whether the queue processor is paused.
   bool get isPaused => _isPaused;
@@ -70,6 +76,13 @@ class OfflineOutboxEngine {
 
     await storage.save(request);
     await _updateCount();
+  }
+
+  /// Enqueues multiple [OutboxRequest] items in a batch.
+  Future<void> enqueueAll(List<OutboxRequest> requests) async {
+    for (final req in requests) {
+      await enqueue(req);
+    }
   }
 
   /// Processes all pending requests currently eligible for transmission.
@@ -121,7 +134,11 @@ class OfflineOutboxEngine {
         String? errorMessage;
 
         try {
-          isSuccess = await executor(updatedReq);
+          isSuccess = await executor(updatedReq)
+              .timeout(retryPolicy.requestTimeout, onTimeout: () {
+            throw TimeoutException(
+                'Request timed out after ${retryPolicy.requestTimeout.inSeconds}s');
+          });
         } catch (e) {
           isSuccess = false;
           errorMessage = e.toString();
@@ -143,6 +160,7 @@ class OfflineOutboxEngine {
             );
             await storage.save(deadReq);
             _onFailedController.add(deadReq);
+            _onDeadLetterController.add(deadReq);
           } else {
             // Schedule next exponential backoff retry
             final Duration delay = retryPolicy.computeNextDelay(attempts);
@@ -162,6 +180,42 @@ class OfflineOutboxEngine {
     }
 
     return successCount;
+  }
+
+  /// Retrieves all dead-lettered requests.
+  Future<List<OutboxRequest>> getDeadLetterRequests() async {
+    final items = await storage.getAll();
+    return items
+        .where((i) => i.status == OutboxItemStatus.deadLetter)
+        .toList();
+  }
+
+  /// Retries a dead-lettered request by resetting its attempts and setting status back to pending.
+  Future<bool> retryDeadLetter(String requestId) async {
+    final req = await storage.getById(requestId);
+    if (req == null || req.status != OutboxItemStatus.deadLetter) {
+      return false;
+    }
+
+    final resetReq = req.copyWith(
+      status: OutboxItemStatus.pending,
+      attempts: 0,
+      nextRetryAt: null,
+      lastError: null,
+    );
+    await storage.save(resetReq);
+    await _updateCount();
+    return true;
+  }
+
+  /// Purges all dead-lettered requests from storage.
+  Future<int> clearDeadLetters() async {
+    final dead = await getDeadLetterRequests();
+    for (final d in dead) {
+      await storage.remove(d.id);
+    }
+    await _updateCount();
+    return dead.length;
   }
 
   /// Pauses queue processing (e.g. when app goes into background or device is known offline).
@@ -201,5 +255,6 @@ class OfflineOutboxEngine {
     await _pendingCountController.close();
     await _onCompletedController.close();
     await _onFailedController.close();
+    await _onDeadLetterController.close();
   }
 }

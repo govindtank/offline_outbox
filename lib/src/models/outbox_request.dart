@@ -33,6 +33,9 @@ enum OutboxItemStatus {
   deadLetter,
 }
 
+/// Sentinel object to allow clearing nullable fields in copyWith.
+const Object _undefined = Object();
+
 /// Represents a persistent network request waiting to be delivered.
 class OutboxRequest {
   /// Unique identifier for this request item.
@@ -135,35 +138,54 @@ class OutboxRequest {
   }
 
   /// Creates a copy of this request with updated fields.
+  /// Explicitly supports setting nullable fields to null.
   OutboxRequest copyWith({
     String? id,
     String? endpoint,
     String? method,
-    dynamic payload,
-    Map<String, String>? headers,
-    String? idempotencyKey,
+    Object? payload = _undefined,
+    Object? headers = _undefined,
+    Object? idempotencyKey = _undefined,
     OutboxPriority? priority,
     DateTime? createdAt,
     int? attempts,
-    DateTime? nextRetryAt,
+    Object? nextRetryAt = _undefined,
     OutboxItemStatus? status,
-    String? lastError,
+    Object? lastError = _undefined,
   }) {
     return OutboxRequest(
       id: id ?? this.id,
       endpoint: endpoint ?? this.endpoint,
       method: method ?? this.method,
-      payload: payload ?? this.payload,
-      headers: headers ?? this.headers,
-      idempotencyKey: idempotencyKey ?? this.idempotencyKey,
+      payload: identical(payload, _undefined) ? this.payload : payload,
+      headers: identical(headers, _undefined)
+          ? this.headers
+          : headers as Map<String, String>?,
+      idempotencyKey: identical(idempotencyKey, _undefined)
+          ? this.idempotencyKey
+          : idempotencyKey as String?,
       priority: priority ?? this.priority,
       createdAt: createdAt ?? this.createdAt,
       attempts: attempts ?? this.attempts,
-      nextRetryAt: nextRetryAt ?? this.nextRetryAt,
+      nextRetryAt: identical(nextRetryAt, _undefined)
+          ? this.nextRetryAt
+          : nextRetryAt as DateTime?,
       status: status ?? this.status,
-      lastError: lastError ?? this.lastError,
+      lastError: identical(lastError, _undefined)
+          ? this.lastError
+          : lastError as String?,
     );
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is OutboxRequest &&
+          runtimeType == other.runtimeType &&
+          id == other.id;
+
+  @override
+  int get hashCode => id.hashCode;
 }
 
 /// Configurable exponential backoff retry strategy with jitter.
@@ -183,6 +205,9 @@ class RetryPolicy {
   /// Whether to add randomized jitter to prevent thundering herd spikes.
   final bool enableJitter;
 
+  /// Per-request timeout duration.
+  final Duration requestTimeout;
+
   /// Creates a [RetryPolicy].
   const RetryPolicy({
     this.maxAttempts = 5,
@@ -190,6 +215,7 @@ class RetryPolicy {
     this.maxDelay = const Duration(minutes: 5),
     this.backoffMultiplier = 2.0,
     this.enableJitter = true,
+    this.requestTimeout = const Duration(seconds: 30),
   });
 
   /// Computes the delay before attempt number [attempt] (1-indexed).
