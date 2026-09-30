@@ -80,7 +80,8 @@ void main() {
       expect(executionOrder, ['crit_req', 'low_req']);
     });
 
-    test('Retries with exponential backoff on failure and marks dead letter after max attempts',
+    test(
+        'Retries with exponential backoff on failure and marks dead letter after max attempts',
         () async {
       int attemptsCount = 0;
       final engine = OfflineOutboxEngine(
@@ -139,7 +140,8 @@ void main() {
           requestTimeout: Duration(milliseconds: 50),
         ),
         executor: (req) async {
-          await Future.delayed(const Duration(milliseconds: 200)); // Hanged request
+          await Future.delayed(
+              const Duration(milliseconds: 200)); // Hanged request
           return true;
         },
       );

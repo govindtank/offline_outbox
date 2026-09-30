@@ -185,9 +185,7 @@ class OfflineOutboxEngine {
   /// Retrieves all dead-lettered requests.
   Future<List<OutboxRequest>> getDeadLetterRequests() async {
     final items = await storage.getAll();
-    return items
-        .where((i) => i.status == OutboxItemStatus.deadLetter)
-        .toList();
+    return items.where((i) => i.status == OutboxItemStatus.deadLetter).toList();
   }
 
   /// Retries a dead-lettered request by resetting its attempts and setting status back to pending.
