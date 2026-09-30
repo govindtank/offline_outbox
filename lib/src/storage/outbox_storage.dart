@@ -125,3 +125,70 @@ class FileJsonOutboxStorage implements OutboxStorage {
     await _flush();
   }
 }
+
+/// Key-Value or custom persistence adapter (e.g. for SharedPreferences or Hive).
+class CallbackOutboxStorage implements OutboxStorage {
+  final Future<void> Function(String key, String value) onWrite;
+  final Future<String?> Function(String key) onRead;
+  final Future<void> Function(String key) onDelete;
+  final Future<List<String>> Function() onGetAllKeys;
+
+  CallbackOutboxStorage({
+    required this.onWrite,
+    required this.onRead,
+    required this.onDelete,
+    required this.onGetAllKeys,
+  });
+
+  @override
+  Future<void> init() async {}
+
+  @override
+  Future<void> save(OutboxRequest request) async {
+    final jsonStr = jsonEncode(request.toJson());
+    await onWrite('outbox_${request.id}', jsonStr);
+  }
+
+  @override
+  Future<void> remove(String id) async {
+    await onDelete('outbox_$id');
+  }
+
+  @override
+  Future<List<OutboxRequest>> getAll() async {
+    final keys = await onGetAllKeys();
+    final outboxKeys = keys.where((k) => k.startsWith('outbox_'));
+    final list = <OutboxRequest>[];
+    for (final k in outboxKeys) {
+      final jsonStr = await onRead(k);
+      if (jsonStr != null) {
+        try {
+          list.add(OutboxRequest.fromJson(
+              jsonDecode(jsonStr) as Map<String, dynamic>));
+        } catch (_) {}
+      }
+    }
+    return list;
+  }
+
+  @override
+  Future<OutboxRequest?> getById(String id) async {
+    final jsonStr = await onRead('outbox_$id');
+    if (jsonStr == null) return null;
+    try {
+      return OutboxRequest.fromJson(
+          jsonDecode(jsonStr) as Map<String, dynamic>);
+    } catch (_) {
+      return null;
+    }
+  }
+
+  @override
+  Future<void> clear() async {
+    final keys = await onGetAllKeys();
+    final outboxKeys = keys.where((k) => k.startsWith('outbox_'));
+    for (final k in outboxKeys) {
+      await onDelete(k);
+    }
+  }
+}

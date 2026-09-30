@@ -23,3 +23,8 @@
 * Real-time stream controllers for pending counts, completion events, and failure alerts.
 * Interactive example app simulating online/offline state, manual sync, and event logging.
 * 100% test coverage and zero pub.dev warnings.
+
+## 1.1.1
+
+* Added `CallbackOutboxStorage` for custom key-value databases and SharedPreferences persistence.
+* Automated pub.dev OIDC deployment.

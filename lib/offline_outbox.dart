@@ -9,3 +9,4 @@ library offline_outbox;
 export 'src/models/outbox_request.dart';
 export 'src/storage/outbox_storage.dart';
 export 'src/engine/offline_outbox_engine.dart';
+export 'src/storage/outbox_storage.dart' show CallbackOutboxStorage;
