@@ -1,3 +1,8 @@
+## 1.1.1
+
+* Added `CallbackOutboxStorage` for custom key-value databases and SharedPreferences persistence.
+* Verified CI/CD workflows.
+
 ## 1.1.0
 
 * Converted to pure Dart package (zero Flutter SDK dependency).
@@ -7,11 +12,6 @@
 * Added `onDeadLetterStream` for real-time monitoring of failed items.
 * Fixed `copyWith` null-safety bug allowing explicit reset of nullable fields.
 * Added explicit `platforms` declaration (Android, iOS, macOS, Windows, Linux).
-
-## 1.0.0 Converted to pure Dart package — no Flutter SDK dependency required.
-* Works in Dart CLI apps, server-side Dart, and Flutter projects.
-* Added `platforms` declaration (android, ios, linux, macos, windows).
-* Note: `dart:io` is used for `FileJsonOutboxStorage`; web is excluded.
 
 ## 1.0.0
 
@@ -23,8 +23,3 @@
 * Real-time stream controllers for pending counts, completion events, and failure alerts.
 * Interactive example app simulating online/offline state, manual sync, and event logging.
 * 100% test coverage and zero pub.dev warnings.
-
-## 1.1.1
-
-* Added `CallbackOutboxStorage` for custom key-value databases and SharedPreferences persistence.
-* Automated pub.dev OIDC deployment.
