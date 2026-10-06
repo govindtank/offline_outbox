@@ -1,6 +1,6 @@
 name: offline_outbox
 description: "Resilient offline-first outbox and retry queue for Dart and Flutter with disk persistence, exponential backoff, priority scheduling, and deduplication."
-version: 1.1.1
+version: 1.1.2
 homepage: https://github.com/govindtank/offline_outbox
 repository: https://github.com/govindtank/offline_outbox
 topics:
