@@ -1,15 +1,11 @@
 # offline_outbox
 
-[![Pub Version](https://img.shields.io/pub/v/offline_outbox.svg?style=flat-square&color=blue)](https://pub.dev/packages/offline_outbox)
-[![Pub Points](https://img.shields.io/pub/points/offline_outbox?style=flat-square&color=2E8B57&label=pub%20points)](https://pub.dev/packages/offline_outbox/score)
-[![Pub Likes](https://img.shields.io/pub/likes/offline_outbox?style=flat-square)](https://pub.dev/packages/offline_outbox)
-[![CI](https://github.com/govindtank/offline_outbox/actions/workflows/ci.yml/badge.svg)](https://github.com/govindtank/offline_outbox/actions)
-[![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg?style=flat-square)](LICENSE)
-
-A resilient, offline-first transactional outbox and retry queue for Flutter and Dart with **persistent disk storage**, **exponential backoff with jitter**, **priority scheduling**, and **idempotency deduplication**.
-
 <p align="center">
-  <img src="https://raw.githubusercontent.com/govindtank/offline_outbox/main/screenshot.svg" width="750" alt="offline_outbox demo"/>
+  <a href="https://pub.dev/packages/offline_outbox"><img src="https://img.shields.io/pub/v/offline_outbox.svg?style=flat-square&color=blue" alt="Pub Version"></a>
+  <a href="https://pub.dev/packages/offline_outbox/score"><img src="https://img.shields.io/pub/points/offline_outbox?style=flat-square&color=2E8B57&label=pub%20points" alt="Pub Points"></a>
+  <a href="https://pub.dev/packages/offline_outbox"><img src="https://img.shields.io/pub/likes/offline_outbox?style=flat-square" alt="Pub Likes"></a>
+  <a href="https://github.com/govindtank/offline_outbox/actions"><img src="https://github.com/govindtank/offline_outbox/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-Apache%202.0-blue.svg?style=flat-square" alt="License"></a>
 </p>
 
 ---
