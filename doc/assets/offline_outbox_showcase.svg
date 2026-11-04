@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0B0F19" />
+      <stop offset="50%" stop-color="#0F172A" />
+      <stop offset="100%" stop-color="#020617" />
+    </linearGradient>
+    <linearGradient id="syncGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#3B82F6" />
+      <stop offset="50%" stop-color="#10B981" />
+      <stop offset="100%" stop-color="#06B6D4" />
+    </linearGradient>
+    <filter id="cardShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="24" stdDeviation="32" flood-color="#000000" flood-opacity="0.65" />
+    </filter>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#bg)" />
+
+  <g stroke="#334155" stroke-opacity="0.15" stroke-width="1">
+    <path d="M0,70 H1200 M0,140 H1200 M0,210 H1200 M0,280 H1200 M0,350 H1200 M0,420 H1200 M0,490 H1200 M0,560 H1200" />
+    <path d="M70,0 V630 M140,0 V630 M210,0 V630 M280,0 V630 M350,0 V630 M420,0 V630 M490,0 V630 M560,0 V630 M630,0 V630 M700,0 V630 M770,0 V630 M840,0 V630 M910,0 V630 M980,0 V630 M1050,0 V630 M1120,0 V630" />
+  </g>
+
+  <circle cx="600" cy="315" r="280" fill="#3B82F6" opacity="0.08" />
+
+  <g filter="url(#cardShadow)">
+    <rect x="150" y="75" width="900" height="480" rx="24" fill="#0F172A" stroke="#1E293B" stroke-width="2" />
+    <rect x="150" y="75" width="900" height="480" rx="24" fill="none" stroke="url(#syncGrad)" stroke-width="1.5" stroke-opacity="0.4" />
+  </g>
+
+  <text x="190" y="130" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="800" font-size="28" fill="#F8FAFC" letter-spacing="-0.5">
+    offline_outbox
+  </text>
+  <text x="190" y="160" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="500" font-size="14" fill="#94A3B8">
+    Offline-First Mutation Queue • Exponential Backoff • Disk Persistence • Zero Data Loss
+  </text>
+
+  <g transform="translate(740, 108)">
+    <rect width="130" height="28" rx="14" fill="#1E3A8A" fill-opacity="0.3" stroke="#3B82F6" stroke-width="1" />
+    <text x="65" y="18" text-anchor="middle" font-family="monospace" font-size="11" font-weight="bold" fill="#60A5FA">OFFLINE FIRST</text>
+  </g>
+  <g transform="translate(885, 108)">
+    <rect width="125" height="28" rx="14" fill="#065F46" fill-opacity="0.3" stroke="#10B981" stroke-width="1" />
+    <text x="62" y="18" text-anchor="middle" font-family="monospace" font-size="11" font-weight="bold" fill="#34D399">RETRY QUEUE</text>
+  </g>
+
+  <!-- Flow Architecture Simulation -->
+  <g transform="translate(200, 225)">
+    <!-- App Client Box -->
+    <rect x="0" y="30" width="160" height="110" rx="14" fill="#020617" stroke="#334155" stroke-width="1.5" />
+    <text x="80" y="75" text-anchor="middle" font-size="24">📱</text>
+    <text x="80" y="105" text-anchor="middle" font-family="-apple-system, sans-serif" font-weight="700" font-size="13" fill="#F8FAFC">Flutter App</text>
+    <text x="80" y="123" text-anchor="middle" font-family="monospace" font-size="10" fill="#64748B">Local Action</text>
+
+    <!-- Outbox Queue Box (Center) -->
+    <g transform="translate(240, 0)">
+      <rect width="320" height="170" rx="16" fill="#1E293B" stroke="#3B82F6" stroke-width="1.5" />
+      <text x="20" y="32" font-family="-apple-system, sans-serif" font-weight="700" font-size="14" fill="#F8FAFC">📦 Persistent Outbox Queue</text>
+      
+      <!-- Queue Item 1 (Urgent/Sending) -->
+      <g transform="translate(16, 48)">
+        <rect width="288" height="34" rx="8" fill="#0B0F19" />
+        <circle cx="16" cy="17" r="4" fill="#10B981" />
+        <text x="30" y="21" font-family="monospace" font-size="11" fill="#F8FAFC">POST /api/v1/orders</text>
+        <text x="272" y="21" text-anchor="end" font-family="monospace" font-size="10" fill="#34D399">SYNCED</text>
+      </g>
+
+      <!-- Queue Item 2 (Retrying) -->
+      <g transform="translate(16, 90)">
+        <rect width="288" height="34" rx="8" fill="#0B0F19" />
+        <circle cx="16" cy="17" r="4" fill="#F59E0B" />
+        <text x="30" y="21" font-family="monospace" font-size="11" fill="#F8FAFC">PUT /api/v1/profile</text>
+        <text x="272" y="21" text-anchor="end" font-family="monospace" font-size="10" fill="#FBBF24">RETRY 2s</text>
+      </g>
+
+      <!-- Progress footer -->
+      <text x="20" y="150" font-family="monospace" font-size="11" fill="#94A3B8">Disk-backed • Deduplicated</text>
+    </g>
+
+    <!-- Cloud Server Box -->
+    <g transform="translate(640, 30)">
+      <rect width="160" height="110" rx="14" fill="#020617" stroke="#334155" stroke-width="1.5" />
+      <text x="80" y="75" text-anchor="middle" font-size="24">☁️</text>
+      <text x="80" y="105" text-anchor="middle" font-family="-apple-system, sans-serif" font-weight="700" font-size="13" fill="#F8FAFC">Backend API</text>
+      <text x="80" y="123" text-anchor="middle" font-family="monospace" font-size="10" fill="#64748B">Idempotent 200 OK</text>
+    </g>
+
+    <!-- Connectors / Arrows -->
+    <line x1="160" y1="85" x2="240" y2="85" stroke="#38BDF8" stroke-width="2" stroke-dasharray="4,4" />
+    <line x1="560" y1="85" x2="640" y2="85" stroke="#10B981" stroke-width="2" stroke-dasharray="4,4" />
+  </g>
+</svg>

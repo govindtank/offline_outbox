@@ -1,3 +1,8 @@
+## 1.2.0
+
+* **Showcase Visuals**: Added crisp dark-mode vector SVG architecture flow banner in README documentation.
+* **Corpus & Reliability**: Hardened retry queue backoff jitter under concurrent network transitions.
+
 ## 1.1.2
 
 * docs: update centered vector badges and documentation.

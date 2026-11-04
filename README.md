@@ -8,6 +8,12 @@
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-Apache%202.0-blue.svg?style=flat-square" alt="License"></a>
 </p>
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/govindtank/offline_outbox/main/doc/assets/offline_outbox_showcase.svg" alt="offline_outbox Showcase" width="100%">
+</p>
+
+A resilient, production offline-first transactional outbox and retry queue for Dart and Flutter with disk persistence, exponential backoff, priority scheduling, and deduplication.
+
 ---
 
 ## ⚡ Why offline_outbox?
